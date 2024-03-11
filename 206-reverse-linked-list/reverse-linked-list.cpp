@@ -8,19 +8,27 @@
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
+ void recursion_fn(ListNode* &head, ListNode* curr, ListNode* prev){
+    // base case :
+    if(curr == NULL){
+        head = prev;
+        return;
+    }
+
+    // recursive step :
+    ListNode* remaining_ll_head = curr->next;
+    recursion_fn(head,remaining_ll_head, curr);
+    curr->next = prev;
+
+}
+
 class Solution {
 public:
     ListNode* reverseList(ListNode* head) {
-             ListNode* prev = NULL;
+    ListNode* prev = NULL;
     ListNode* curr = head;
-
-    while (curr != NULL) {
-        ListNode* remaining_ll_head = curr->next;
-        curr->next = prev;
-        prev = curr;
-        curr = remaining_ll_head;
-    }
-
-    return prev;
+    recursion_fn(head, curr, prev);
+    return head;
     }
 };
+
