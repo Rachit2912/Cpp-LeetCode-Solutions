@@ -9,27 +9,27 @@
 class Solution {
 public:
     bool hasCycle(ListNode *head) {
-
-
-     if (head == NULL) {
-        return false;
-    }
-
-    map<ListNode*, bool> visited;
-    ListNode* temp = head;
-
-    while (temp != NULL) {
-
-        if (visited[temp] == true) {
-        return 1; // we reached at the visited node 
+        
+        if(head == NULL || head->next == NULL){
+            return false;
         }
 
-    visited[temp] = true; // mark the current node as visited
-    temp = temp->next;
-    }
+        ListNode* slow = head;
+        ListNode* fast = head;
 
-    return 0; // ll is not circular bcz we got null at the end
+        while(slow != NULL && fast != NULL){
+            fast = fast->next;
+            if(fast != NULL){
+                fast = fast->next;
+            }
+            slow = slow->next;
 
+            if(slow == fast){
+                return 1;
+            }
+        }
+
+        return 0;
 
     }
 };
