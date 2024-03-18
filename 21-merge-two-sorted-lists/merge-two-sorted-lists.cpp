@@ -10,58 +10,37 @@
  */
 class Solution {
 public:
-
-ListNode* merge_sorted(ListNode* first,  ListNode* second) {
-  
-   if(first->next==NULL){
-            first->next = second;
-            return first;}
-
-
-    ListNode* curr1 = first;
-    ListNode* next1 = curr1->next;
-    ListNode* curr2 = second;
-    ListNode* next2 = curr2->next;
-
-    while (next1 != NULL && curr2 != NULL) {
-    
-    if ((curr2->val >= curr1->val) && (curr2->val <= next1->val)) {
-
-    curr1->next = curr2;
-    next2 = curr2->next;
-    curr2->next = next1;
-    curr1 = curr2;
-    curr2 = next2;
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        ListNode* tail=new ListNode(-1);
+        ListNode* head=tail;
+        while(list1!=NULL || list2!=NULL){
+            if(list1==NULL){
+                ListNode* temp=new ListNode(list2->val);
+                tail->next=temp;
+                tail=temp;
+                list2=list2->next;
+                continue;
+            }
+            if(list2==NULL){
+                ListNode* temp=new ListNode(list1->val);
+                tail->next=temp;
+                tail=temp;
+                list1=list1->next;
+                continue;
+            }
+            if(list1->val>list2->val){
+                ListNode* temp=new ListNode(list2->val);
+                tail->next=temp;
+                tail=temp;
+                list2=list2->next;
+            }
+            else {
+                ListNode* temp=new ListNode(list1->val);
+                tail->next=temp;
+                tail=temp;
+                list1=list1->next;
+            }
+        }
+        return head->next;
     }
-
-    else {
-    curr1 = next1;
-    next1 = next1->next;
-    if(next1 == NULL) {curr1->next = curr2; return first;}
-    }
-    }
-
-return first;
-}
-
-
-ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
-    ListNode* ans = NULL;
-    if(list1 == NULL && list2 == NULL) {return NULL;}
-    if (list1 == NULL) return list2;
-    if (list2 == NULL) return list1;
- 
-
-    if (list1->val <= list2->val) {
-    ans = merge_sorted(list1,list2);
-    return ans;
-    }
-
-    else if(list1->val >= list2->val) {
-        ans = merge_sorted(list2,list1);
-        return ans;
-    }
-
-    else return ans;
-}
 };
