@@ -8,80 +8,72 @@
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
-class Solution {
+ 
+ 
+ class Solution {
 public:
-
- void insertAtTail(struct ListNode* &head, struct ListNode* &tail, int val) {
-        
-        ListNode* temp = new ListNode(val);
-        //empty list
-        if(head == NULL) {
-            head = temp;
-            tail = temp;
-            return;
-        }
-        else
-        {
-            tail -> next = temp;
-            tail = temp;
-        }
-    }
-    
-
-ListNode* reverse(ListNode* head){
-    ListNode* curr = head;
-    ListNode* prev = NULL;
-    ListNode* next = NULL;
-    while (curr != NULL) {
-        next = curr->next;
-        curr->next = prev;
-        prev = curr;
-        curr = next;
-}
-return prev;
-}
-
-
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        if(l1 == nullptr) return l2;
+        if(l2 == nullptr) return l1;
         
-         // reverse ll:
-    ListNode* first = reverse(l1);
-    ListNode* second = reverse(l2);
-
-    ListNode* ans_head = NULL;
-    ListNode* ans_tail = NULL;
-    int carry = 0;
-    int digit = 0;
-    int sum = 0;
-    while (first != NULL || second != NULL || carry != 0) {
+        l1 = reverseList(l1);
+        l2 = reverseList(l2);
         
-        int val1 = 0;
-        if (first != NULL) {
-        val1 = first->val;
-        }
-
-        int val2 = 0;
-        if (second != NULL) {
-        val2 = second->val;
+        ListNode* head = new ListNode((l1->val + l2->val) % 10);
+        ListNode* temp = head;
+        int carry = (l1->val + l2->val) / 10;
+        l1 = l1->next;
+        l2 = l2->next;
+        
+        ListNode* a = l1;
+        ListNode* b = l2;
+        
+        while(a != nullptr && b != nullptr) {
+            int sum = a->val + b->val + carry;
+            ListNode* newNode = new ListNode(sum % 10);
+            carry = sum / 10;
+            temp->next = newNode;
+            temp = temp->next;
+            a = a->next;
+            b = b->next;
         }
         
-        sum = carry + val1 + val2 ;
-        digit = sum % 10;
-        carry = sum / 10;
-        insertAtTail(ans_head,ans_tail, digit);
-
-        if (first != NULL) {
-        first = first->next;
+        while(a != nullptr) {
+            int sum = a->val + carry;
+            ListNode* newNode = new ListNode(sum % 10);
+            carry = sum / 10;
+            temp->next = newNode;
+            temp = temp->next;
+            a = a->next;
         }
-
-        if (second != NULL) {
-        second = second->next;
+        
+        while(b != nullptr) {
+            int sum = b->val + carry;
+            ListNode* newNode = new ListNode(sum % 10);
+            carry = sum / 10;
+            temp->next = newNode;
+            temp = temp->next;
+            b = b->next;
         }
+        
+        if(carry != 0) {
+            ListNode* newNode = new ListNode(carry);
+            temp->next = newNode;
+        }
+        
+        return reverseList(head);
     }
     
-    ListNode* final_ans = reverse(ans_head);
-    
-    return final_ans;
-
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = nullptr;
+        ListNode* curr = head;
+        ListNode* next = nullptr;
+        while(curr != nullptr) {
+            next = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
     }
 };
