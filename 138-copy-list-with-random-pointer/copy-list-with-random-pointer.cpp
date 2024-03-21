@@ -42,26 +42,51 @@ public:
 		temp = temp->next;
 	}
 
-	// step 2 : create a map for store the mappings from original list to clone list
-	unordered_map<Node*, Node*> oldToClone;
+	// step 2 : add clone nodes in between the originalNodes
+	
 
 	Node* originalNode = head;
 	Node* cloneNode = cloneHead;
-	while(originalNode != NULL && cloneHead != NULL){
-		oldToClone[originalNode] = cloneNode;
-		originalNode = originalNode->next;
-		cloneNode = cloneNode->next;
-	}
 
-	originalNode = head;
-	cloneNode = cloneHead;
+        while (originalNode != NULL && cloneNode != NULL) {
+                Node *next = originalNode->next;
+                originalNode->next = cloneNode;
+                originalNode = next;
 
-	while(originalNode != NULL){
-		cloneNode->random = oldToClone[originalNode->random];
-		originalNode = originalNode->next;
-		cloneNode = cloneNode->next;
-	}
+                next = cloneNode->next;
+                cloneNode->next = originalNode;
+                cloneNode = next;
+        }
 
+
+
+        // step 3 : random pointer copy to cloneNodes
+    	temp = head;
+        while (temp != NULL){
+			if(temp->next != NULL){
+				temp->next->random = temp->random ? temp->random->next : temp->random;
+			}
+
+			temp = temp->next->next;
+
+		}
+
+        //step 4 : revert the changes done in step 2
+		originalNode = head;
+		cloneNode = cloneHead;
+
+		while(originalNode != NULL && cloneNode != NULL){
+			originalNode->next = cloneNode->next;
+			originalNode = originalNode->next;
+
+                        if (originalNode != NULL) {
+                                cloneNode->next = originalNode->next;
+                        }
+                        cloneNode = cloneNode->next;
+		}
+
+    
+// step 5 : return the cloneHead as your answer
 return cloneHead;
 
     }
