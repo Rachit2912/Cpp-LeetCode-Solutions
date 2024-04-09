@@ -1,29 +1,39 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
 class Solution {
+private:
+    map<int, int> mp;
+    // {yCoordinate, value}
+    vector<int> ans;
+
+    void levelOrderTraversal(TreeNode *root) {
+        if(root == NULL) return;
+
+        queue<pair<TreeNode*, int>> que; // {node, yCoordinate}
+        que.push({root, 0});
+
+        while(!que.empty()) {
+            TreeNode *node = que.front().first;
+            int y = que.front().second;
+            que.pop();
+
+            if(mp.find(y) == mp.end()) {
+                mp[y] = node->val;
+            }
+
+            if(node->right != NULL) que.push({node->right, y+1});
+            if(node->left != NULL) que.push({node->left, y+1});
+        }
+    }
+    
+    void populateAns() {
+        for(auto pr: mp) {
+            ans.push_back(pr.second);
+        }
+    }
+
 public:
-
-void rightView_rcrsn(TreeNode* root,vector<int> &ans, int level){
-    if( root == NULL) return;
-
-    if(level == ans.size()) ans.push_back(root->val);
-
-    rightView_rcrsn(root->right,ans,level+1);
-    rightView_rcrsn(root->left,ans,level+1);
-
-}
     vector<int> rightSideView(TreeNode* root) {
-        vector<int> ans;
-        rightView_rcrsn(root,ans,0);
+        levelOrderTraversal(root);
+        populateAns();
         return ans;
     }
 };
