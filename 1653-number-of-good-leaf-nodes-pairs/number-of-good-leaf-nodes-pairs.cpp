@@ -11,55 +11,33 @@
  */
 class Solution {
 public:
-void makeGraph(TreeNode* currNode,TreeNode* prevNode, unordered_map<TreeNode*,vector<TreeNode*>> &graph, unordered_set<TreeNode*> &leaves){
-    if(!currNode) return;
-
-    if(!currNode->left && !currNode->right) leaves.insert(currNode);
-
-    if(prevNode){
-        graph[prevNode].push_back(currNode);
-        graph[currNode].push_back(prevNode);
+    int countPairs(TreeNode* root, int distance) {
+        int res = 0;
+        dfs(root,distance,res);
+        return res;
     }
 
-    makeGraph(currNode->left,currNode,graph,leaves);
-    makeGraph(currNode->right,currNode,graph,leaves);
-}
+    vector<int> dfs(TreeNode* root, int distance, int &res){
 
-    int countPairs(TreeNode* root, int distance) {
-        // sbse pehle tree ko graph me convert krdo 
-        unordered_map<TreeNode*,vector<TreeNode*>> graph;
-        unordered_set<TreeNode*> leaves;
+        if(!root->left&& !root->right) return {1};
+        vector<int> left, right;
+        if(root->left) left = dfs(root->left,distance,res);
+        if(root->right) right = dfs(root->right,distance,res);
 
-        makeGraph(root,nullptr,graph,leaves);
-        // ab graph to bn gya 
-        // ab bari bfs ki on the leaf nodes 
-        int ans = 0;
-        for(auto& leaf : leaves){
-            queue<TreeNode*> bfsQueue;
-            unordered_set<TreeNode*> visited;
-            bfsQueue.push(leaf);
-            visited.insert(leaf);
-
-            // har leaf node se bfs kro and try ki agr leaf node uss distance k andar mil jaye to ans++ 
-            for(int i =0;i<=distance;i++){// jitni distance allowed wha tak hi jao 
-                int size = bfsQueue.size();
-                for(int j =0; j<size;j++){
-                    TreeNode* currNode = bfsQueue.front();
-                    bfsQueue.pop();
-                    if(leaves.count(currNode) && currNode!=leaf) ans++ ;
-
-                    if(graph.count(currNode)){
-                        for(auto n : graph[currNode]){
-                            if(!visited.count(n)){
-                                bfsQueue.push(n);
-                                visited.insert(n);
-                            }
-                        }
-                    }
-
-                }
+        for(int i =0;i<left.size();i++){
+            for(int j =0;j<right.size();j++){
+                if(left[i]+right[j] <= distance) res++ ;
             }
         }
-        return ans/2 ;
+
+        vector<int> res_vec;
+        for(int i =0;i<left.size();i++){
+            if(left[i] + 1 < distance) res_vec.push_back(left[i] +1);
+        }
+
+        for(int i =0;i<right.size();i++){
+            if(right[i] + 1 <distance) res_vec.push_back(right[i] +1);
+        }
+        return res_vec;
     }
 };
