@@ -1,26 +1,33 @@
 class Solution {
 public:
-    vector<vector<int>> combinationSum2(vector<int> &candidates, int target) {
-        sort(candidates.begin(), candidates.end());
-        vector<vector<int>> result;
-        vector<int> combination;
-        combination2(result, combination, candidates, target, 0);
-        return result;
+
+void solver(int index, int targetSum, vector<int> &candidates, vector<int> &res, vector<vector<int>> &ans){
+
+    // base case : 
+    if(targetSum<0)return;
+    if(targetSum == 0){
+        ans.push_back(res);
+        return;
     }
-    void combination2(vector<vector<int>> &res, vector<int> &combination,
-                      vector<int> &candidates, int target, int index) {
-        if (target == 0) {
-            res.push_back(combination);
-            return;
-        }
-        for (int i = index; i < candidates.size() && target >= candidates[i];
-             ++i) {
-            if (i == index || candidates[i] != candidates[i - 1]) {
-                combination.push_back(candidates[i]);
-                combination2(res, combination, candidates,
-                             target - candidates[i], i + 1);
-                combination.pop_back();
-            }
-        }
+
+    for(int i = index; i<candidates.size();i++){
+        if(i>index && candidates[i]==candidates[i-1]){continue;}
+        res.push_back(candidates[i]);
+        solver(i+1,targetSum-candidates[i],candidates,res,ans);
+        res.pop_back();
+    }
+
+}
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+
+        // sort the candidates array for getting the elements arranged so that we'll get the idea 
+        // if there are more no. of our targetSum are there or not 
+        sort(candidates.begin(),candidates.end());
+        int n = candidates.size();
+
+        vector<vector<int>> ans;
+        vector<int> res;
+        solver(0,target,candidates,res,ans);
+        return ans;
     }
 };
