@@ -32,7 +32,7 @@ public:
             s.pop();
             ans.push_back(curr->val);
 
-            for(Node* i : curr->children){
+            for(auto i : curr->children){
                 s.push(i);
             }
         }
