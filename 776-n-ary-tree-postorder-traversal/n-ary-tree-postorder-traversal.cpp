@@ -18,24 +18,26 @@ public:
 };
 */
 
-void post(Node* root, vector<int> &ans){
-
-    // base case : 
-    if(!root) return;
-
-    for(auto i : root->children){
-        post(i,ans);
-    }
-
-    ans.push_back(root->val);
-}
-
 class Solution {
 public:
     vector<int> postorder(Node* root) {
         vector<int> ans;
-        post(root,ans);
+
+        if(!root) return ans;
+        stack<Node*> s;
+        s.push(root);
+
+        while(!s.empty()){
+            Node* curr = s.top();
+            s.pop();
+            ans.push_back(curr->val);
+
+            for(Node* i : curr->children){
+                s.push(i);
+            }
+        }
+
+        reverse(ans.begin(),ans.end());
         return ans;
-        
     }
 };
