@@ -17,7 +17,6 @@ public:
         vector<char> dirns = {'n', 'e', 's', 'w'};
         int dir = 0;
 
-        // Convert obstacles to a set of pairs for faster lookup
         set<pair<int, int>> obstacle_set;
         for (auto& o : obstacles) {
             obstacle_set.insert({o[0], o[1]});
@@ -30,13 +29,13 @@ public:
                 dir = (dir + 1) % 4;
             }
             else if (i == -2) {
-                dir = (dir + 3) % 4;  // equivalent to (dir - 1 + 4) % 4 to handle negative
+                dir = (dir -1+4) % 4;  
             }
             else {
                 for (int step = 0; step < i; ++step) {
                     pair<int, int> next_step = new_cord(x, y, dirns[dir], 1);
                     if (obstacle_set.find(next_step) != obstacle_set.end()) {
-                        break; // stop moving if an obstacle is found
+                        break; 
                     }
                     x = next_step.first;
                     y = next_step.second;
