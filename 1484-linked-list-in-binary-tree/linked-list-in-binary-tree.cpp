@@ -22,23 +22,54 @@
 class Solution {
 public:
     bool isSubPath(ListNode* head, TreeNode* root) {
-     if(!root)return false;
-     bool r = dfs(root,head);
+        if(!root) return false;
+        stack<TreeNode*> s;
+        s.push(root);
 
-     r |= isSubPath(head,root->left);
-     r |= isSubPath(head,root->right);
-     return r;   
+        while(!s.empty()){
+            TreeNode* top = s.top();
+            s.pop();
+
+            if(isMatch(top,head)){return true;}
+
+            if(top->left){
+                s.push(top->left);
+            }
+
+            if(top->right){
+                s.push(top->right);
+            }
+        }
+        return false;
     }
 
-    bool dfs(TreeNode* root, ListNode* head){
-        if(!head)return true;
-        if(!root)return false;
+    bool isMatch(TreeNode* node,ListNode* head){
+        stack<pair<TreeNode*, ListNode*>> s;
+        s.push({node,head});
 
-        bool r = false;
-        if(root->val == head->val){
-            r |= dfs(root->left,head->next);
-            r |= dfs(root->right,head->next);
+        while(!s.empty()){
+            auto [currNode, currHead] = s.top();
+            s.pop();
+
+            while(currNode && currHead){
+                if(currNode->val != currHead->val){break;}
+                currHead = currHead->next;
+
+                if(currHead){
+                    if(currNode->left){
+                        s.push({currNode->left,currHead});
+                    }
+                    if(currNode->right){
+                        s.push({currNode->right,currHead});
+                    }
+
+                    break;
+                }
+            }
+            if(!currHead){
+                return true;
+            }
         }
-        return r;
+        return false;
     }
 };
