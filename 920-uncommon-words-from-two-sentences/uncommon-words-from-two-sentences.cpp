@@ -15,6 +15,7 @@ public:
             }
            }
 
+            // for single words only like if either s1 or s2 is "" 
            if(word != ""){
             freq[word]++ ; 
             word ="";
