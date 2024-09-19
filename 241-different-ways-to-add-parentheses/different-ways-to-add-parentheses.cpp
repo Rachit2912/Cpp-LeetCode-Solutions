@@ -29,6 +29,8 @@ private :
         }
             // after all these if result is still empty, it means operator isn't present at all
             // then return the given integer only 
+            // this will convert all the parts containing purely integers wihtout any opearators will 
+            // get into the result and will be converted to integers fromm string
             if(result.empty()){
                 result.push_back(stoi(str));
             }
