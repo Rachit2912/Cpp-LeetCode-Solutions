@@ -1,20 +1,31 @@
 class Solution {
+private : 
+
+vector<int> prefix_function(string s) {
+    int n = (int)s.length();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
+        int j = pi[i-1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j-1];
+        if (s[i] == s[j])
+            j++;
+        pi[i] = j;
+    }
+    return pi;
+}
+
 public:
     string shortestPalindrome(string s) {
-        string reversedString = s;
-        // Reverse the original string
-        reverse(reversedString.begin(), reversedString.end());
 
-        // Iterate through the string to find the longest palindromic prefix
-        for (int i = 0; i < s.size(); ++i) {
-            // memcmp to avoid creating substrings
-            if (!memcmp(s.c_str(), reversedString.c_str() + i, s.size() - i)) {
-                // Append the necessary part to make the palindrome
-                return reversedString.substr(0, i) + s;
-            }
-        }
-        // Fallback case, append the whole reversed string to the original
-        // string
-        return reversedString + s;
+        string reversed = string(s.rbegin(),s.rend());
+        string comb = s+"#"+reversed;
+        vector<int> pre = prefix_function(comb);
+
+        int longestPalLength = pre[comb.length()-1];
+
+        string thatNeedToBeReversed = reversed.substr(0,reversed.length()-longestPalLength);
+        return thatNeedToBeReversed+s;
+
     }
 };
