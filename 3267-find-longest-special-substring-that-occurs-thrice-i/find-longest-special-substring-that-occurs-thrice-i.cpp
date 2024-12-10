@@ -1,31 +1,36 @@
 class Solution {
 public:
     int maximumLength(string s) {
-        // Create a map of strings to store the count of all substrings.
-        map<string, int> count;
-        for (int start = 0; start < s.length(); start++) {
-            string currString;
-            for (int end = start; end < s.length(); end++) {
-                // If the string is empty, or the current character is equal to
-                // the previously added character, then add it to the map.
-                // Otherwise, break the iteration.
-                if (currString.empty() or currString.back() == s[end]) {
-                    currString.push_back(s[end]);
-                    count[currString]++;
-                } else {
+        vector<vector<int>> freq(26,vector<int>(s.size()+1,0));
+        char prevchar = s[0];
+        int substrlen = 1;
+        freq[s[0]-'a'][1]=1;
+        int ans =-1;
+
+        for(int charidx=1; charidx<s.size(); charidx++){
+            char currchar = s[charidx];
+
+            if(currchar == prevchar){
+                substrlen++ ;
+                int cnt=1;
+                freq[currchar-'a'][substrlen]+=1;
+            }
+            else{
+                prevchar = currchar;
+                substrlen =1;
+                freq[currchar-'a'][1] +=1 ;
+            }
+        }
+
+        for(int charidx=0; charidx<26; charidx++){
+            for(int len = s.size()-1; len>=1; len--){
+                freq[charidx][len] += freq[charidx][len+1];
+                if(freq[charidx][len] >= 3){
+                    ans = max(ans,len);
                     break;
                 }
             }
         }
-
-        // Create a variable ans to store the longest length of substring with
-        // frequency atleast 3.
-        int ans = 0;
-        for (auto i : count) {
-            string str = i.first;
-            if (i.second >= 3 && str.length() > ans) ans = str.length();
-        }
-        if (ans == 0) return -1;
         return ans;
     }
 };
