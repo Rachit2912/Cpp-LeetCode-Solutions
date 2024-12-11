@@ -1,26 +1,14 @@
-#define p pair<int,int>  
 class Solution {
 public:
     int maximumBeauty(vector<int>& nums, int k) {
-        vector<p> intervals={};
-        sort(nums.begin(),nums.end());
-        
-        for(auto i : nums){
-            intervals.push_back({i-k,i+k});
+        sort(begin(nums),end(nums));
+        int r(0),maxBeauty(0);
+
+        for(int l =0; l<nums.size(); l++){
+            while(r<nums.size() && nums[r]<=nums[l]+2*k)r++ ; 
+
+            maxBeauty = max(maxBeauty,r-l);
         }
-
-
-        deque<int> deq;
-        int ans = -1;
-        for(auto i : intervals){
-            while(!deq.empty() && deq.front() < i.first){
-                deq.pop_front();
-            }
-
-            deq.push_back(i.second);
-
-            ans = max(ans,(int)deq.size());
-        }
-        return ans;
+        return maxBeauty;
     }
 };
