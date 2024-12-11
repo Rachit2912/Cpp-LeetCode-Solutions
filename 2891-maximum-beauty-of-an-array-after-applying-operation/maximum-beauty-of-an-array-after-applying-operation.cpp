@@ -1,22 +1,26 @@
+#define p pair<int,int>  
 class Solution {
 public:
     int maximumBeauty(vector<int>& nums, int k) {
-        int maxVal = -1;
-        for(int n : nums)maxVal = max(maxVal,n);
-        vector<int> freq(maxVal+1+k,0);
-        int maxFreq = INT_MIN;
-        for(auto i: nums){
-            freq[max(i-k,0)]++ ;
-            if(i+k+1 <= maxVal)freq[i+k+1]-- ;
+        vector<p> intervals={};
+        sort(nums.begin(),nums.end());
+        
+        for(auto i : nums){
+            intervals.push_back({i-k,i+k});
         }
 
-        int currSum =0;
-        maxVal=-1;
-        for(int val : freq){
-            currSum+=val;
-            maxVal = max(maxVal,currSum);
-        }
 
-        return maxVal;
+        deque<int> deq;
+        int ans = -1;
+        for(auto i : intervals){
+            while(!deq.empty() && deq.front() < i.first){
+                deq.pop_front();
+            }
+
+            deq.push_back(i.second);
+
+            ans = max(ans,(int)deq.size());
+        }
+        return ans;
     }
 };
