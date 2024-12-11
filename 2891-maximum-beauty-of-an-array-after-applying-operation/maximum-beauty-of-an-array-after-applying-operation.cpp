@@ -1,14 +1,27 @@
 class Solution {
 public:
     int maximumBeauty(vector<int>& nums, int k) {
+        int n = nums.size();
         sort(begin(nums),end(nums));
-        int r(0),maxBeauty(0);
+        int maxBeauty(0);
 
-        for(int l =0; l<nums.size(); l++){
-            while(r<nums.size() && nums[r]<=nums[l]+2*k)r++ ; 
-
-            maxBeauty = max(maxBeauty,r-l);
+        for(int i=0; i<n; i++){
+            int upperBound = findUpperBound(nums,nums[i]+2*k);
+            maxBeauty = max(maxBeauty,upperBound-i+1);
         }
         return maxBeauty;
+    }
+
+    private:
+    int findUpperBound(vector<int> &nums, int val){
+        int l(0),h(nums.size()-1),res(0);
+
+        while(l<=h){
+            int mid = l+(h-l)/2;
+
+            if(nums[mid] <= val){res=mid;l=mid+1;}
+            else{h=mid-1;}
+        }
+        return res;
     }
 };
