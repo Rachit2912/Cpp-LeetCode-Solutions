@@ -1,28 +1,36 @@
 class Solution {
 public:
     long long continuousSubarrays(vector<int>& nums) {
-        int n = nums.size();
-        map<int,int> mp;
-        int i=0,j=0;
-        long long ans=0;
-        long long diff;
-        while(j<n){
-            mp[nums[j]]++;
+        int i(0),j(0);
+        int currMin,currMax;
+        long long winLen=0,total=0;
+        currMin=currMax=nums[i];
 
-            diff = abs(mp.begin()->first - mp.rbegin()->first);
+        while(j<nums.size()){
+            currMin = min(currMin,nums[j]);
+            currMax = max(currMax,nums[j]);
+            
+            if(currMax - currMin > 2){
+                winLen = j-i;
+                total += (winLen*(winLen+1)/2);
+                i=j;
+                currMin = currMax = nums[j];
 
-            // condtn. broken:
-            while(diff>2){
-                // shrink window:
-                mp[nums[i]]--;
-                if(!mp[nums[i]])mp.erase(nums[i]);
-                i++;
-                diff = abs(mp.begin()->first - mp.rbegin()->first);
+                while(i>0 && abs(nums[j]-nums[i-1])<=2){
+                    i-- ;
+                    currMin = min(currMin, nums[i]);
+                    currMax = max(currMax,nums[i]);
+                }
+
+                if(i<j){
+                    winLen = j-i;
+                    total -= (winLen*(winLen+1)/2);
+                }
             }
-            ans += (j-i+1);
             j++;
-
         }
-        return ans;
+        winLen = j-i;
+        total += (winLen*(winLen+1)/2);
+        return total;
     }
 };
