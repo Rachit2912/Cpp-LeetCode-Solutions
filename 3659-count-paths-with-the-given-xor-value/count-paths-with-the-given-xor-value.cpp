@@ -1,24 +1,30 @@
 class Solution {
 public:
-int mod= 1e9+7,k,n,m,dp[300][300][16];
-vector<vector<int>>grid;
-
-int f(int i, int j, int curr){
-    if(i>=n || j>=m)return 0;
-    curr ^= grid[i][j];
-    if(i==n-1 && j==m-1)return curr==k;
-
-    if(dp[i][j][curr] != -1)return dp[i][j][curr];
-    int right = f(i,j+1,curr)%mod;
-    int down = f(i+1,j,curr)%mod;
-    return dp[i][j][curr] = (right+down)%mod;
-}
-
     int countPathsWithXorValue(vector<vector<int>>& grid, int k) {
-        this->grid = grid;
-        this->k = k;
-        n= grid.size();m=grid[0].size();
-        memset(dp, -1, sizeof dp);
-        return f(0,0,0);        
+        const int MOD = 1e9+7;
+        int n = grid.size(),m = grid[0].size();
+
+        vector<vector<vector<int>>> dp(n,vector<vector<int>>(m,vector<int>(20,00)));
+
+        dp[n-1][m-1][grid[n-1][m-1]^k]=1;
+
+        for(int i=n-1; i>=0; i--){
+            for(int j=m-1; j>=0; j--){
+                for(int curr =0; curr<16; curr++){
+                    if(i==n-1 && j==m-1)continue;
+
+                    int newCurr = curr^grid[i][j];
+
+                    if(j+1<m){
+                        dp[i][j][curr] = (dp[i][j][curr] + dp[i][j+1][newCurr]) % MOD;
+                    }
+
+                    if(i+1<n){
+                        dp[i][j][curr] = (dp[i][j][curr] + dp[i+1][j][newCurr]) % MOD;
+                    }
+                }
+            }
+        }
+        return dp[0][0][0];
     }
 };
