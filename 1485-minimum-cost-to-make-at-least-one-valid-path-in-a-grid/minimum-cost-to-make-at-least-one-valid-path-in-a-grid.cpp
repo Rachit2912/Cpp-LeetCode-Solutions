@@ -17,6 +17,8 @@ vector<vector<int>> dir ={{0,1},{0,-1},{1,0},{-1,0}};
 
             int currCost = curr[0], i = curr[1], j = curr[2];
 
+            if(res[i][j] < currCost)continue;
+
             for(int d=0; d<4; d++){
                 int newI = i+dir[d][0], newJ = j+dir[d][1];
 
