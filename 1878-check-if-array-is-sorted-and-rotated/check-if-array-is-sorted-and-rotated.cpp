@@ -1,15 +1,21 @@
 class Solution {
 public:
     bool check(vector<int>& nums) {
-        int cnt = 0;
-        for(int i=1;i<nums.size();i++) 
-        {
-            if(nums[i] < nums[i-1])
-                cnt++;
+        int n = nums.size();
+        vector<int> chk(n);
+
+        for(int r=0; r<n; r++){
+            int idx=0;
+            for(int i=r; i<n; i++){chk[idx++]=nums[i];}
+            for(int i=0; i<r; i++){chk[idx++]=nums[i];}
+
+            bool isSorted = true;
+            for(int i=0; i<n-1; i++){
+                if(chk[i]>chk[i+1]){isSorted=false;break;}
+            }
+
+            if(isSorted)return true;
         }
-        if(nums[nums.size()-1] > nums[0])
-            cnt++;
-        
-        return cnt<=1;
+        return false;
     }
 };
