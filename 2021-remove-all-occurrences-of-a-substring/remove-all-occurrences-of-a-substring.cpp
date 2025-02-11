@@ -1,8 +1,9 @@
 class Solution {
 public:
     string removeOccurrences(string s, string part) {
-        while( s.length() != 0 && s.find(part) < s.length() ) {
-            s.erase(s.find(part),part.length());
+        while(s.find(part) != -1){
+            int i = s.find(part);
+            s = s.substr(0,i) + s.substr(i+part.length());
         }
         return s;
     }
