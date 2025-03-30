@@ -1,24 +1,19 @@
 class Solution {
 public:
-    //RECURSION + MEMOIZATION
-    int help(int ind , int prev ,vector<int>& arr,vector<vector<int>> &dp){
-        if(ind == arr.size())return 0;
-            
-        if(dp[ind][prev+1] != -1){
-            return dp[ind][prev+1];
-        }
-        
-        int nottake = help(ind+1,prev,arr,dp);
-        int take =0;
-        if(prev==-1 || arr[ind]>arr[prev]){
-            take = 1+help(ind+1,ind,arr,dp);
-        }
-        return dp[ind][prev+1]=max(nottake,take);
-    }
-     int lengthOfLIS(vector<int>& nums) {
+         int lengthOfLIS(vector<int>& nums) {
         int n = nums.size();
-        //APPROACH 1
-        vector<vector<int>> dp(n+1,vector<int>(n+1,-1));
-        return help(0,-1,nums,dp);
-	}
+		        //APPROACH 2 BETTER SPACE OPTIMIZATION
+        vector<int> dp(n,1);
+        int maxi=1;
+        for(int ind = 1;ind<n;ind++){
+            for(int prev =0;prev<ind;prev++){
+                if(nums[ind] > nums[prev]){
+                    dp[ind]=max(dp[ind],1+dp[prev]);
+                }
+             }
+            maxi = max(maxi,dp[ind]);
+        }
+        return maxi;
+
+    }
 };
