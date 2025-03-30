@@ -1,28 +1,29 @@
 class Solution {
-
-private:
-void Strperm(vector<int>& str,vector<vector<int>>& ans,int index){
-
-    // base case :
-    if (index >= str.size()){
-        ans.push_back(str);
-        return ;
-    }
-
-    // recursive call : 
-    for (int i=index;i<str.size();i++){
-        swap(str[index],str[i]);
-        Strperm(str,ans,index+1);
-        swap(str[index],str[i]);
-    }
-    
-}
-
 public:
     vector<vector<int>> permute(vector<int>& nums) {
-        int index = 0;
         vector<vector<int>> ans;
-        Strperm(nums,ans,index);
+        int idx=0;
+        vector<int>temp;
+        unordered_set<int>chars;
+        solve(ans,nums,temp,chars);
         return ans;
+    }
+
+private:
+    void solve(vector<vector<int>> &ans, vector<int> &nums, vector<int> temp, unordered_set<int> &chars){
+
+        for(int i=0; i<nums.size(); i++){
+
+            if(temp.size()==nums.size()){ans.push_back(temp);return;}
+
+            if(chars.find(nums[i])==chars.end()){
+                temp.push_back(nums[i]);
+                chars.insert(nums[i]);
+                solve(ans,nums,temp,chars);
+                chars.erase(nums[i]);
+                temp.pop_back();
+            }
+        }
+
     }
 };
