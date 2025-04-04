@@ -11,33 +11,20 @@
  */
 class Solution {
 public:
-        unordered_map<int,int> depths;
-        int maxDepth = 0;
-        
     TreeNode* lcaDeepestLeaves(TreeNode* root) {
-        depthSet(root,0);
-        return lca(root,maxDepth);
+        return solve(root).second;
     }
 
 private:
-    void depthSet(TreeNode* root, int depth){
-        if(!root)return;
-        maxDepth = max(maxDepth,depth);
-        depths[root->val]=depth;
-        depthSet(root->left,depth+1);
-        depthSet(root->right,depth+1);
-    }
+    pair<int,TreeNode*> solve(TreeNode* root){
+        
+        if(!root){return {0,NULL};}
 
-    TreeNode* lca(TreeNode* root,int maxDepth){
+        auto l = solve(root->left);
+        auto r = solve(root->right);
 
-        if(root==NULL || depths[root->val]==maxDepth)return root;
-
-        TreeNode* l = lca(root->left,maxDepth);
-        TreeNode* r = lca(root->right,maxDepth);
-
-        if(l==NULL)return r;
-        else if(r==NULL)return l;
-        else return root;
-
+        if(l.first == r.first){return {l.first+1,root};}
+        else if(l.first>r.first){return {l.first+1,l.second};}
+        else {return {r.first+1,r.second};}
     }
 };
