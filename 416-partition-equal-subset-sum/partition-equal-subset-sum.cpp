@@ -1,33 +1,42 @@
 class Solution {
 public:
-    int dp[201][20001];
-    bool canPartition(vector<int>& nums) {
-        memset(dp,-1,sizeof(dp));
-        int sum = accumulate(nums.begin(),nums.end(),0);
-        if(sum%2)return false;
+    int t[201][20001];
+    bool solve(vector<int>& nums, int i, int x) {
+        if(x == 0) {
+            return true;
+        }
 
-        return solve(0,sum/2,nums);
+        if(i >= nums.size()) {
+            return false;
+        }
 
+        if(t[i][x] != -1) {
+            return t[i][x];
+        }
+
+        bool take = false;
+        if(nums[i] <= x) {
+            take = solve(nums, i+1, x - nums[i]);
+        }
+
+        bool not_take = solve(nums, i+1, x);
+
+        return t[i][x] = take || not_take;
     }
 
-private:
-    bool solve(int idx, int target, vector<int> &nums){
+    bool canPartition(vector<int>& nums) {
+        int n = nums.size();
+        
+        int S = accumulate(begin(nums), end(nums), 0);
 
-        // base case :
-        if(target==0)return true;
-        if(target<0)return false;
-        if(idx==nums.size())return false;
+        if(S%2 != 0) {
+            return false;
+        }  
+        memset(t, -1, sizeof(t));
+        //vector<vecyot<int>> t(n+1, vector<int>(x+1, -1))
+        int x = S/2;
 
-        if(dp[idx][target]!=-1)return dp[idx][target];
+        return solve(nums, 0, x);
 
-        // exploration : skip ya take
-        // take :
-        bool take = false;
-        if(nums[idx] <= target)take = solve(idx+1,target-nums[idx],nums);
-
-        // skip :
-        auto skip = solve(idx+1,target,nums);
-
-        return dp[idx][target]=take||skip;
     }
 };
