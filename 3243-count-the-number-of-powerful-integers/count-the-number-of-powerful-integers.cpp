@@ -1,31 +1,35 @@
+#define ll long long 
 class Solution {
 public:
     long long numberOfPowerfulInt(long long start, long long finish, int limit, string s) {
-        return solve(to_string(finish),s,limit)-solve(to_string(start-1),s,limit);
+        ll result = countUpTo(to_string(finish),s,limit)-countUpTo(to_string(start-1),s,limit);
+        return result;
     }
 
-private:    
-    long long solve(const string &str, string &ipSuffix, int limit){
+private:
+    long long countUpTo(const string& numStr, string suffix, int limit){
+        int numLen = numStr.length();
+        int suffixLen = suffix.length();
 
-        if(stoll(str) < stoll(ipSuffix))return 0;
-        long long cnt=0;
+        if(numLen < suffixLen)return 0;
+        if(numLen == suffixLen)return (numStr >= suffix) ? 1 : 0 ;
 
-        int remainDigits = str.length() - ipSuffix.length();
-        string pichheWaliStr = str.substr(remainDigits);
+        long long count=0;
+        int prefixLen = numLen-suffixLen;
+        string actualSuffix = numStr.substr(prefixLen);
 
-        for(int i=0; i<remainDigits; i++){
-            int digit = str[i]-'0';
-
-            if(digit<=limit){
-                cnt += (digit * pow(limit+1, remainDigits-i-1));
-            }else{
-                cnt += (pow(limit+1,remainDigits-i));
-                return cnt;
+        for(int i=0; i<prefixLen; i++){
+            long long waysForRemaining = pow(limit+1,prefixLen-i-1);
+            int currDigit = numStr[i]-'0';
+            if(currDigit>limit){
+                count += (limit+1)*waysForRemaining;
+                return count;
             }
+            count += (currDigit*waysForRemaining);
         }
 
-        if(pichheWaliStr >= ipSuffix)cnt++;
+        if(actualSuffix >= suffix)count++;
 
-        return cnt;
+        return count;
     }
 };
