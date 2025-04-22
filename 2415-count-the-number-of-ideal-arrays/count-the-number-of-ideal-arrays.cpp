@@ -1,47 +1,76 @@
-const int mod = 1e9+7;
-const int N = 1e4+5;
-
-int dp[21][N]; // for combinations
-int lengths[N][21]; // selecting the nos. for sequence
-
 class Solution {
-    // lengths[j][k] --> How many unique paths are there that ends at 'j' & have length of 'k'
-    void CalculateUniquePathLengths () {
-        memset(lengths, 0, sizeof(lengths));
-
-        for (int j = 1; j < N; j ++) {
-            lengths[j][1] = 1;
-            for (int k = j+j; k < N; k += j) {
-                for (int i = 0; i < 20; i ++) lengths[k][i+1] += lengths[j][i];
-            }
-        }
-    }
-    
-    // How many unique arrangement of length 'length' & having all the values from [1 ..X]
-    int UniqueArrangements (int length, int mx) {
-        if (length == 0) return (mx == 0);
-        if (mx == 0) return 0;
-        
-        int &ans = dp[mx][length];
-        if (ans != -1) return ans;
-        
-        ans = (UniqueArrangements(length-1, mx) + UniqueArrangements(length-1, mx-1)) % mod;
-        return ans;
-    }
-    
 public:
-    int idealArrays(int n, int maxValue) {
-        memset(dp, -1, sizeof(dp));
-        CalculateUniquePathLengths();
-        
-        int ans = 0;
-        for (int last = maxValue; last >= 1; last --) {            
-            for (int j = 1; j < 21; j ++) {
-                long long arrangementsWithEverything = UniqueArrangements(n, j);
-                
-                ans = (ans + (arrangementsWithEverything * lengths[last][j]) % mod) % mod;
+    int M = 1e9+7;
+    void findSets(int m, vector<int>& count, vector<vector<int>>& dp) {
+        if(dp[m][1] != 0) {
+            return;
+        }
+
+        dp[m][1] = 1;
+        count[1]++;
+
+        for(int div = 2; div <= m; div++) {
+            if(m % div == 0) {
+                findSets(m/div, count, dp);
+
+                for(int len = 1; len < 15; len++) {
+                    if(dp[m/div][len] != 0) {
+                        dp[m][len+1] += dp[m/div][len];
+                        count[len+1] += dp[m/div][len];
+                    }
+                }
             }
         }
-        return ans;
+    }
+
+    int findPower(long long a, long long b) {
+        if(b == 0)
+            return 1;
+        
+        long long half = findPower(a, b/2);
+        long long result = (half * half) % M;
+
+        if(b%2 == 1) {
+            result = (result * a) % M;
+        }
+
+        return result;
+    }
+
+    int modularnCr(int n, int r, vector<long long>& fact) {
+        if(r < 0 || r > n)
+            return 0;
+        
+        long long b = (fact[r] * fact[n-r]) % M;
+        return (fact[n] * findPower(b, M-2)) % M;
+    }
+
+    int idealArrays(int n, int maxVal) {
+        vector<vector<int>> dp(maxVal+1, vector<int>(15, 0));
+        vector<int> count(15, 0);
+
+        
+        for(int val = 1; val <= maxVal; val++) {
+            findSets(val, count, dp);
+        }
+
+        vector<long long> fact(n+1, 1);
+        for(int i = 2; i <= n; i++) {
+            fact[i] = (fact[i-1] * i) % M;
+        }
+
+        long long result = 0;
+        for(int len = 1; len < 15; len++) {
+            if(n < len) {
+                break;
+            }
+            if(count[len] != 0) {
+                long long possibilities = modularnCr(n-1, len-1, fact);
+                result = (result + (count[len] * possibilities)%M) % M;
+            }
+        }
+
+        return (int)result;
+
     }
 };
