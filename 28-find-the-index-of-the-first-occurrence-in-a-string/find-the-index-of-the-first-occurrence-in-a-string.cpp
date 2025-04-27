@@ -1,26 +1,53 @@
 class Solution {
 public:
     int strStr(string haystack, string needle) {
-        if (needle.empty()) return 0;
+        int idxs = kmp(haystack,needle);
+        // if(idxs.size()==0)return -1;    
+        // return idxs[0];
+        return idxs;
+    }
 
-        int h = 0;
-        int n = 0;
+    int kmp(string text, string pattern){
+        int lenT = text.size();
+        int lenP = pattern.size();
+        vector<int> ans;
+        vector<int> lps(lenP,0);
+        calcLPS(pattern,lps);
 
-        while (h < haystack.size()) {
-            if (haystack[h] == needle[n]) {
-                int start = h;
-                while (n < needle.size() && h < haystack.size() && haystack[h] == needle[n]) {
-                    h++;
-                    n++;
-                }
-                if (n == needle.size()) return start;
-                n = 0;
-                h = start + 1;
-            } else {
-                h++;
+        int i=0,j=0;
+        while(i<lenT){
+            if(text[i]==pattern[j]){
+                i++;j++;
+            }
+
+            if(j==lenP){
+                return i-j;
+                j = lps[j-1];
+            } else if(i<lenT && text[i]!=pattern[j]){
+                if(j!=0)j=lps[j-1];
+                else i++;
             }
         }
-        
         return -1;
     }
+
+    void calcLPS(string pattern, vector<int> &lps){
+        lps[0]=0;
+        int lenP = pattern.length();
+        int length = 0;
+
+        int i=1;
+        while(i<lenP){
+            if(pattern[length]==pattern[i]){
+                length++;
+                lps[i]=length;
+                i++;
+            } else{
+                if(length!=0)length=lps[length-1];
+                else {lps[i]=0;i++;}
+            }
+        }
+    }
+
+    
 };
