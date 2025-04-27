@@ -1,13 +1,12 @@
 class Solution {
 public:
     int strStr(string haystack, string needle) {
-        int idxs = kmp(haystack,needle);
-        // if(idxs.size()==0)return -1;    
-        // return idxs[0];
-        return idxs;
+        vector<int> idxs = kmp(haystack,needle);
+        if(idxs.size()==0)return -1;    
+        return idxs[0];
     }
 
-    int kmp(string text, string pattern){
+    vector<int> kmp(string text, string pattern){
         int lenT = text.size();
         int lenP = pattern.size();
         vector<int> ans;
@@ -21,14 +20,14 @@ public:
             }
 
             if(j==lenP){
-                return i-j;
+                ans.push_back(i-j);
                 j = lps[j-1];
             } else if(i<lenT && text[i]!=pattern[j]){
                 if(j!=0)j=lps[j-1];
                 else i++;
             }
         }
-        return -1;
+        return ans;
     }
 
     void calcLPS(string pattern, vector<int> &lps){
