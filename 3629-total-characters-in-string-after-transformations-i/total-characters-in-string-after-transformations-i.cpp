@@ -1,26 +1,31 @@
-typedef long long ll;
-const ll mod = 1e9 + 7;
-ll mod_add(ll a, ll b) {a = a % mod; b = b % mod; return (((a + b) % mod) + mod) % mod;}
-
 class Solution {
 public:
-    int lengthAfterTransformations(string s, int t) {
-        int nums[26] = {0};
-        for (char ch : s) nums[ch - 'a']++;
-        while (t--) {
-            int cur[26] = {0};
-            for (int j = 0; j < 26; j++) {
-                if (j == 25 && nums[j] > 0) {
-                    cur[0] = mod_add(cur[0], nums[j]);
-                    cur[1] = mod_add(cur[1], nums[j]);
-                } else {
-                    if (j < 25) cur[j + 1] = mod_add(cur[j + 1], nums[j]);
-                }
-            }
-            for (int j = 0; j < 26; j++) nums[j] = cur[j];
+    const int mod = 1e9 + 7;
+    vector<vector<int>> dp;
+
+    int dfs(char ch, int t) {
+        if (t == 0) return 1;
+        int idx = ch - 'a';
+        if (dp[idx][t] != -1) return dp[idx][t];
+
+        if (ch == 'z') {
+            // 'z' becomes 'a' and 'b', then we apply t-1 transformations to both
+            long long left = dfs('a', t - 1);
+            long long right = dfs('b', t - 1);
+            return dp[idx][t] = (left + right) % mod;
+        } else {
+            return dp[idx][t] = dfs(ch + 1, t - 1);
         }
-        ll cnt = 0;
-        for (int i : nums) cnt = mod_add(cnt, i);
-        return (int)cnt;
+    }
+
+    int lengthAfterTransformations(string s, int t) {
+        dp = vector<vector<int>>(26, vector<int>(t + 1, -1));
+        long long total = 0;
+
+        for (char ch : s) {
+            total = (total + dfs(ch, t)) % mod;
+        }
+
+        return total;
     }
 };
