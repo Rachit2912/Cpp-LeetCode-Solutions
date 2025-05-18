@@ -1,29 +1,60 @@
 class Solution {
 public:
+    vector<vector<int>> t;
+    vector<string> columnStates;
+    const int MOD = 1e9 + 7;
 
-    int dp[5001][4][4][4] = {};
-    
-    int numOfWays(int n) {
-        return dfs(n, 0, 0, 0);        
+    void generateColumnStates(string currentColumn, int rowsRemaining, char prevColor) {
+        if (rowsRemaining == 0) {
+            columnStates.push_back(currentColumn);
+            return;
+        }
+
+        for (char color : {'R', 'G', 'B'}) {
+            if (color == prevColor) continue;
+            generateColumnStates(currentColumn + color, rowsRemaining - 1, color);
+        }
     }
 
-    int dfs(int n, int a0, int b0, int c0) {
-        if (n == 0) return 1;
-        if (dp[n][a0][b0][c0] != 0) return dp[n][a0][b0][c0];
-        int ans = 0;
-        vector<int> colors = {1, 2, 3}; // Red: 1, Yellow: 2, Green: 3
-        for (int a : colors) {
-            if (a == a0) continue; // Check if the same color with the below neighbor
-            for (int b : colors) {
-                if (b == b0 || b == a) continue; // Check if the same color with the below neighbor or the left neighbor
-                for (int c : colors) {
-                    if (c == c0 || c == b) continue; // Check if the same color with the below neighbor or the left neighbor
-                    ans += dfs(n - 1, a, b, c);
-                    ans %= 1000000007;
+    int solve(int remainingCols, int prevColumnIdx) {
+        if (remainingCols == 0)
+            return 1;
+        if (t[remainingCols][prevColumnIdx] != -1)
+            return t[remainingCols][prevColumnIdx];
+
+        int totalWays = 0;
+        string& prevColumn = columnStates[prevColumnIdx];
+
+        for (int nextColumnIdx = 0; nextColumnIdx < columnStates.size(); nextColumnIdx++) {
+            string& nextColumn = columnStates[nextColumnIdx];
+            bool valid = true;
+            for (int r = 0; r < 3; r++) {
+                if (prevColumn[r] == nextColumn[r]) {
+                    valid = false;
+                    break;
                 }
             }
+
+            if (valid) {
+                totalWays = (totalWays + solve(remainingCols - 1, nextColumnIdx)) % MOD;
+            }
         }
-        return dp[n][a0][b0][c0] = ans;
+
+        return t[remainingCols][prevColumnIdx] = totalWays;
     }
 
+    int numOfWays(int n) {
+        columnStates.clear();
+        generateColumnStates("", 3, '#');
+
+        int numStates = columnStates.size();
+        t.assign(n, vector<int>(numStates, -1));
+
+        int result = 0;
+        for (int i = 0; i < numStates; i++) {
+            result = (result + solve(n - 1, i)) % MOD;
+        }
+
+        return result;
+    }
 };
