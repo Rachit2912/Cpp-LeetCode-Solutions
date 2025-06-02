@@ -1,21 +1,31 @@
 class Solution {
 public:
     int candy(vector<int>& ratings) {
-        int n = ratings.size();
-        vector<int> count(n, 1);
-        
-        //First comparing with only left neighbour
-        for(int i = 1; i<n; i++) {
-            if(ratings[i] > ratings[i-1])count[i] = count[i-1]+1;
+        int n = ratings.size(), candy=n;
+
+        int i=1;
+        while(i<n){
+            if(ratings[i] == ratings[i-1]){i++;continue;}
+
+            int peak=0;
+            while(i<n && ratings[i] > ratings[i-1]){
+                peak++;
+                candy += peak;
+                i++;
+            }
+
+            if(i==n)return candy;
+
+            int dip=0;
+            while(i<n && ratings[i]<ratings[i-1]){
+                dip++;
+                candy += dip;
+                i++;
+            }
+
+            candy -= min(dip,peak);
         }
-        
-        //Then comparing with only right neighbour
-        for(int i = n-2; i>=0; i--) {
-            if(ratings[i] > ratings[i+1])
-                count[i] = max(count[i], count[i+1]+1);
-        }
-        
-        
-        return accumulate(begin(count), end(count), 0);
+
+        return candy;
     }
 };
