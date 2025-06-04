@@ -3,15 +3,29 @@ class Solution {
         if(numFriends==1)return word;
 
         int n = word.length();
-        String ans = "";
+        int i = maxLexSubstrIdx(word);
 
-        int maxPossibleLen = n-(numFriends-1);
-        for(int i=0; i<n; i++){
-            int canTakeLen = Math.min(i+maxPossibleLen,n);
-            String temp = word.substring(i,canTakeLen);
+        int maxLenPossible = n-(numFriends-1);
+        return word.substring(i,Math.min(i+maxLenPossible,n));
+    }
 
-            if(ans.compareTo(temp) <= 0)ans=temp;
+    private int maxLexSubstrIdx(String word){
+
+        int i=0,j=1,n=word.length();
+
+        while(j<n){
+            int k=0;
+
+            while(j+k<n && word.charAt(i+k)==word.charAt(j+k))k++;
+
+            if(j+k<n && word.charAt(j+k) > word.charAt(i+k)){
+                i=j;
+                j++;
+            }else{
+                j=j+k+1;
+            }
         }
-        return ans;
+
+        return i;
     }
 }
