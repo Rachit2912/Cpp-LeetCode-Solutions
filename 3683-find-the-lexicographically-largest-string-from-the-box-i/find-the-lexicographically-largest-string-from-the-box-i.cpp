@@ -1,15 +1,38 @@
 class Solution {
+private:
+    int maxLexSubstrIdx(string &word){
+
+        int i=0,j=1,n=word.length();
+
+        while(j<n){
+            int k=0;
+
+            while(j+k<n && word[i+k]==word[j+k])k++;
+
+            if(j+k<n && word[j+k]>word[i+k]){
+                i=j;
+                j++;
+            }else{
+                j=j+k+1;
+            }
+
+        }
+
+        return i;
+
+    }
 public:
     string answerString(string word, int numFriends) {
-        
-        int n = size(word);
         if(numFriends==1)return word;
-        string ans;
-        int maxPossibleLength = n-(numFriends-1);
-        for(int i=0; i<n; i++){
-            int canTakeLength = min(maxPossibleLength,n-i);
-            ans = max(ans,word.substr(i,canTakeLength));
-        }
-        return ans;
+
+        int n = word.length();
+
+        int i = maxLexSubstrIdx(word);
+
+        int maxPossibleLen = n-(numFriends-1);
+        int canTakeLen = min(maxPossibleLen,n-i);
+
+        return word.substr(i,canTakeLen);
+
     }
 };
