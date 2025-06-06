@@ -1,22 +1,30 @@
 class Solution {
 public:
     string robotWithString(string s) {
-        unordered_map<int,int> freq;
-        for(char c : s)freq[c]++;
+        int n = s.length();
+        vector<char> minCharToRight(n);
+        minCharToRight[n-1]=s[n-1];
+        for(int i=n-2; i>=0; i--)minCharToRight[i]=min(s[i],minCharToRight[i+1]);
 
-        stack<char> stk;
         string t,paper;
-        char minChar = 'a';
-        for(char c : s){
-            stk.push(c);
-            freq[c]--;
+        int i=0;
 
-            while(minChar != 'z' && freq[minChar] ==0)minChar++;
+        while(i<n){
+            t.push_back(s[i]);
 
-            while(!stk.empty() && stk.top() <= minChar){
-                paper.push_back(stk.top());
-                stk.pop();
+            char minChar = (i+1<n) ? minCharToRight[i+1] : s[i];
+
+            while(!t.empty() && t.back() <= minChar){
+                paper += t.back();
+                t.pop_back();
             }
+
+            i++;
+        }
+
+        while(!t.empty()){
+            paper += t.back();
+            t.pop_back();
         }
         return paper;
     }
