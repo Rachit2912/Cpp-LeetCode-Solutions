@@ -1,33 +1,25 @@
 class Solution {
 public:
     int maxDistance(string s, int k) {
-        int ans = 0;
-        int north = 0, south = 0, east = 0, west = 0;
-        for (char it : s) {
-            switch (it) {
+        int latitude = 0, longitude = 0, ans = 0;
+        int n = s.size();
+        for (int i = 0; i < n; i++) {
+            switch (s[i]) {
                 case 'N':
-                    north++;
+                    latitude++;
                     break;
                 case 'S':
-                    south++;
+                    latitude--;
                     break;
                 case 'E':
-                    east++;
+                    longitude++;
                     break;
                 case 'W':
-                    west++;
+                    longitude--;
                     break;
             }
-           ans = max(ans,
-           count(north,south,min({north,south,k})) +
-           count(east,west,min({east,west,
-           (k-min({north,south,k}))
-           })));
+            ans = max(ans, min(abs(latitude) + abs(longitude) + k * 2, i + 1));
         }
         return ans;
-    }
-
-    int count(int drt1, int drt2, int times) {
-        return abs(drt1 - drt2) + times * 2;
     }
 };
