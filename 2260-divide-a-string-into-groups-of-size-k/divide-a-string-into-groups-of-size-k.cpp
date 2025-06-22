@@ -2,20 +2,12 @@ class Solution {
 public:
     vector<string> divideString(string s, int k, char fill) {
         vector<string> ans;
-        int n = s.size();
-        int i =0;
-
+        int i=0, n=s.length();
         while(i<n){
-            int j = (i+k-1 >= n) ? (n-1) : (i+k-1);
-            string temp = s.substr(i,j-i+1);
-
-            if(j-i+1 < k){
-                int remain = k - (j-i+1);
-                temp += string(remain,fill);
-            }
+            ans.push_back(s.substr(i,k));
             i+=k;
-            ans.push_back(temp);
         }
+        ans.back() += string(k-ans.back().size(),fill);
         return ans;
     }
 };
