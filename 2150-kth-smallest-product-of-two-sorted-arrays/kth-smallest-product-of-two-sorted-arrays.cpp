@@ -1,40 +1,78 @@
 class Solution {
 public:
-    int f(vector<int>& nums2, long long x1, long long v) {
-        int n2 = nums2.size();
-        int left = 0, right = n2 - 1;
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (x1 >= 0 && nums2[mid] * x1 <= v ||
-                x1 < 0 && nums2[mid] * x1 > v) {
-                left = mid + 1;
+
+    long long findCountSmallest(vector<int>& nums1, vector<int>& nums2, long long midProduct) {
+        long long productsCount = 0;
+
+        int n = nums2.size();
+
+        for(int i = 0; i < nums1.size(); i++) {
+            //nums1[i]
+
+            if(nums1[i] >= 0) {
+                int l = 0;
+                int r = n-1;
+                int m = -1; //invalid index on left hand side
+
+                while(l <= r) {
+                    int mid = l + (r-l)/2;
+                    long long product = 1LL * nums1[i] * nums2[mid];
+
+                    if(product <= midProduct) {
+                        m = mid;
+                        l = mid+1;
+                    } else {
+                        r = mid-1;
+                    }
+                }
+                productsCount += (m+1); //covered by nums1[i]
             } else {
-                right = mid - 1;
+                //product will be negative and right hand side will contain smaller products and left hand side larger
+                int l = 0;
+                int r = n-1;
+                int m = n; //invalid index on the right hand side
+
+                while(l <= r) {
+                    int mid = l + (r-l)/2;
+                    long long product = 1LL * nums1[i] * nums2[mid];
+
+                    if(product <= midProduct) {
+                        m = mid;
+                        r = mid-1;
+                    } else {
+                        l = mid+1;
+                    }
+                }
+                                                    
+                productsCount += (n - m);
             }
         }
-        if (x1 >= 0) {
-            return left;
-        } else {
-            return n2 - left;
-        }
+        return productsCount;
     }
 
-    long long kthSmallestProduct(vector<int>& nums1, vector<int>& nums2,
-                                 long long k) {
-        int n1 = nums1.size();
-        long long left = -1e10, right = 1e10;
-        while (left <= right) {
-            long long mid = (left + right) / 2;
-            long long count = 0;
-            for (int i = 0; i < n1; i++) {
-                count += f(nums2, nums1[i], mid);
-            }
-            if (count < k) {
-                left = mid + 1;
+    long long kthSmallestProduct(vector<int>& nums1, vector<int>& nums2, long long k) {
+        long long result = 0;
+
+        long long l = -1e10; //min product possible
+        long long r = 1e10; //max product possible
+
+        while(l <= r) {
+            long long midProduct = l + (r-l)/2;
+
+            //check if this is kth smallest or not
+
+            long long countSmallest = findCountSmallest(nums1, nums2, midProduct);
+
+            if(countSmallest >= k) {
+                result = midProduct;
+                r = midProduct-1;
             } else {
-                right = mid - 1;
+                l = midProduct+1;
             }
         }
-        return left;
+        return result;
     }
 };
+
+
+
