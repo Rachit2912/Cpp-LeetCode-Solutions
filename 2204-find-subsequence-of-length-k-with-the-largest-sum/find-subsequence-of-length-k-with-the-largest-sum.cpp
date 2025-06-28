@@ -2,17 +2,21 @@ class Solution {
 public:
     vector<int> maxSubsequence(vector<int>& nums, int k) {
         int n = nums.size();
-        vector<pair<int,int>> temp;
-        for(int i=0; i<n; i++)temp.emplace_back(i,nums[i]);
+        vector<int> temp(nums);
+        nth_element(temp.begin(),temp.begin()+k-1,end(temp),greater<int>());
 
-        sort(temp.begin(),end(temp),
-        [&](pair<int,int> a, pair<int,int> b){
-            return a.second>b.second;
-        });
-        sort(temp.begin(),begin(temp)+k);
+        int pivot = temp[k-1];
+        int pivotCnt = count(temp.begin(),temp.begin()+k,pivot);
+
         vector<int>ans;
-        for(int i=0; i<k; i++)ans.push_back(temp[i].second);
-        return ans;
+        for(int n : nums){
+            if(n>pivot)ans.push_back(n);
+            else if(pivot==n && pivotCnt>0){
+                ans.push_back(pivot);
+                pivotCnt--;
+            }
+        }
 
+        return ans;
     }
 };
