@@ -60,11 +60,11 @@ private:
         int i=0,j=0;
         int L = sub.length(), n =s.length();
 
-        while(i<n && j<k*L){
+        while(i<n){
             if(s[i] == sub[j%L])j++;
             i++;
         }
-        return j==(L*k);
+        return j>=(L*k);
     }
 
 };
