@@ -16,7 +16,7 @@ public:
 
         int maxLen = n/k;
 
-        for(int len=maxLen; len>=0; len--){
+        for(int len=maxLen; len>0; len--){
             vector<int> tempFreq = freq;
             string curr="";
             if(genSubseq_and_Chk(s,curr,canUse,tempFreq,k,len))return ans;
