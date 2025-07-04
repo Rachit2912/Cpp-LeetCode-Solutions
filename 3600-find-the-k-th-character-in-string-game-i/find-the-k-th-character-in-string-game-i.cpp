@@ -1,14 +1,13 @@
 class Solution {
 public:
     char kthCharacter(int k) {
-        string curr = "a";
-        while(curr.length() < k){
-            int n = curr.length();
-            for(int i=0; i<n; ++i){
-                char ch = curr[i] == 'z' ? 'a' : curr[i]+1;
-                curr.push_back(ch);
-            }
+        int change=0, t;
+        while(k != 1){
+            t = __lg(k);
+            if((1<<t) == k)t--;
+            k -= (1<<t);
+            change++;
         }
-        return curr[k-1];
+        return 'a'+change;
     }
 };
