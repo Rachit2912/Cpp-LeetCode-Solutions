@@ -1,62 +1,31 @@
-class Solution 
-{
+class Solution {
 public:
-    int maxValue(vector<vector<int>>& events, int k) 
-    {
-        // Step 1: Sort events by end time
-        sort(events.begin(), events.end(), [](const vector<int>& a, const vector<int>& b) {
-            return a[1] < b[1];
-        });
+    vector<vector<int>> dp;
+    int n;
+    vector<int> next;
 
-        int n = events.size();
+    int attend(int i, int num, vector<vector<int>>& events){
+        if (i == n || num == 0) return 0;
+        if (dp[i][num] != -1) return dp[i][num];
 
-        // Step 2: Initialize DP table
-        vector<vector<int>> dp(n + 1, vector<int>(k + 1, 0));
+        // Attend the event i
+        int attend_i = events[i][2] + attend(next[i], num - 1, events);
 
-        // Step 3: Loop through each event
-        for (int i = 1; i <= n; ++i) 
-        {
-            int start = events[i - 1][0];
-            int end = events[i - 1][1];
-            int value = events[i - 1][2];
+        // Skip the event i
+        int skip_i = attend(i+1, num, events);
 
-            // Step 4: Binary search for last event that ends before this one starts
-            int prev = binarySearch(events, i - 1, start);
-
-            // Step 5: Try all possible selection counts
-            for (int j = 1; j <= k; ++j) 
-            {
-                // Option 1: Skip current
-                // Option 2: Take current + best from prev
-                dp[i][j] = max(dp[i - 1][j], dp[prev + 1][j - 1] + value);
-            }
-        }
-
-        // Step 6: Return max value from all k selections
-        return dp[n][k];
+        // Choose the maximum of attend_i& skip_i
+        int ans = max(attend_i, skip_i);
+        return dp[i][num] = ans;
     }
-
-private:
-    // Binary Search: find last index with end < targetStart
-    int binarySearch(const vector<vector<int>>& events, int right, int targetStart) 
-    {
-        int left = 0;
-        int res = -1;
-        
-        while (left <= right) 
-        {
-            int mid = left + (right - left) / 2;
-            if (events[mid][1] < targetStart) 
-            {
-                res = mid;
-                left = mid + 1;
-            } 
-            else 
-            {
-                right = mid - 1;
-            }
+    int maxValue(vector<vector<int>>& events, int num) {
+        n = events.size();
+        sort(events.begin(), events.end());
+        dp.assign(n + 1, vector<int>(num + 1, -1));
+        next.assign(n, n);
+        for(int i=0; i<n; i++){
+            next[i]=upper_bound(events.begin()+i, events.end(), vector<int>{events[i][1]+1,0,0})-events.begin();
         }
-
-        return res;
+        return attend(0, num, events);
     }
 };
