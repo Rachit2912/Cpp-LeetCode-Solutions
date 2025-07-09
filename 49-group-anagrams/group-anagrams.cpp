@@ -4,14 +4,16 @@ public:
         unordered_map<string, vector<string>> ans;
 
         for (string& s : strs) {
-            string key = s;
-            sort(key.begin(), key.end());
+            array<int, 26> count = {0};
+            for (char c : s)count[c - 'a']++;
+            string key;
+            for (int num : count)key += to_string(num)+",";
             ans[key].push_back(s);
         }
 
         vector<vector<string>> result;
         for (auto& entry : ans) {
-            result.push_back(entry.second);
+            result.push_back(move(entry.second));
         }
 
         return result;        
