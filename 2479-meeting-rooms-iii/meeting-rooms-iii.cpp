@@ -1,38 +1,35 @@
+using P = pair<long long,int>;
 class Solution {
 public:
     int mostBooked(int n, vector<vector<int>>& meetings) {
-        vector<long long>endTime(n,0),cnt(n,0);
-        sort(begin(meetings), end(meetings)); 
+        int m = meetings.size();
+        sort(begin(meetings),end(meetings));
+        vector<int> cnt(n,0);
+        priority_queue<P,vector<P>,greater<P>>used;
+        priority_queue<int,vector<int>,greater<>>unused;
+        for(int i=0; i<n; ++i)unused.push(i);
 
-        for(int i=0; i<meetings.size(); ++i){
+        for(auto m : meetings){
 
-            int j=0;
-            bool found=false;
-            long long EarliestEnd = LLONG_MAX;
-            int EarliestRoom = 0;
-            while(j<n){
-                if(endTime[j] <= meetings[i][0]){
-                    endTime[j] = meetings[i][1];
-                    cnt[j]++;
-                    found=true;
-                    break;
-                }
-
-                if(endTime[j]<EarliestEnd){
-                    EarliestEnd = endTime[j];
-                    EarliestRoom = j;
-                }
-                j++;
-            }
-            
-            if(found==false){
-                endTime[EarliestRoom] += (meetings[i][1]-meetings[i][0]);
-                cnt[EarliestRoom]++;
+            while(!used.empty() && used.top().first <= m[0]){
+                int r = used.top().second;
+                used.pop();
+                unused.push(r);
             }
 
-
+            if(!unused.empty()){
+                int r = unused.top();unused.pop();
+                used.push({m[1],r});
+                cnt[r]++;
+            }else{
+                int r = used.top().second;
+                long long endTime = used.top().first;
+                used.pop();
+                used.push({endTime+(m[1]-m[0]),r});
+                cnt[r]++;
+            }
         }
-        for(int r=0; r<n; ++r)if(cnt[r]==*max_element(cnt.begin(),end(cnt)))return r;
+        for(int r=0; r<n; ++r)if(cnt[r] == *max_element(cnt.begin(),end(cnt)))return r;
         return -1;
     }
 };
